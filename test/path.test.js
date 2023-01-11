@@ -20,6 +20,10 @@ describe("Determining the path", () => {
     );
   });
 
+  it("throws error if path parameter is missing", () => {
+    expect(() => getPath(model.definitions["Petstore.pet_"])).toThrow();
+  });
+
   it("can map to path with query parameters", () => {
     expect(
       getPath(model.definitions["Petstore.user_login"], {
@@ -27,6 +31,19 @@ describe("Determining the path", () => {
         password: "Welcome1",
       })
     ).toEqual("/user/login?username=jdoe&password=Welcome1");
+  });
+
+  it("can map to path with additional query customizer", () => {
+    expect(
+      getPath(
+        model.definitions["Petstore.user_login"],
+        {
+          username: "jdoe",
+          password: "Welcome1",
+        },
+        (queryParams) => queryParams.set("apiKey", "secret")
+      )
+    ).toEqual("/user/login?username=jdoe&password=Welcome1&apiKey=secret");
   });
 
   it("can map to path with arrayed query parameters", () => {
